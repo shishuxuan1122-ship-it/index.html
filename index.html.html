@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>景觀植栽配置決策助手｜離線規則式教學示範</title>
+<style>
+:root{--ink:#20352d;--muted:#718078;--line:#e1e9e3;--paper:#f5f8f4;--white:#fff;--green:#426b53;--green2:#dce9dd;--lime:#a8bd82;--sand:#eee9dc;--orange:#c8894d;--shadow:0 8px 28px #233d2d0c}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 "Noto Sans TC",system-ui,-apple-system,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{display:grid;grid-template-columns:238px 1fr;min-height:100vh}.side{background:#20382d;color:#edf4ed;padding:28px 18px;display:flex;flex-direction:column;gap:24px}.brand{font-weight:800;font-size:19px;line-height:1.35}.brand small{display:block;font-size:11px;color:#b6c9b9;font-weight:500;letter-spacing:.08em;margin-top:7px}.nav{display:grid;gap:8px}.nav button{border:0;background:transparent;color:#c9d7cb;text-align:left;padding:12px;border-radius:12px;display:flex;gap:12px;align-items:center}.nav button.active,.nav button:hover{background:#365342;color:white}.num{font-size:11px;border:1px solid #78917d;border-radius:7px;padding:2px 6px}.side-note{margin-top:auto;color:#aebfb1;font-size:12px;border-top:1px solid #45604e;padding-top:16px}.main{padding:32px clamp(18px,4vw,54px);max-width:1500px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:25px}.eyebrow{color:var(--green);font-weight:700;font-size:12px;letter-spacing:.12em}.top h1{font-size:clamp(24px,3vw,34px);margin:4px 0 5px;letter-spacing:-.03em}.sub{color:var(--muted);margin:0}.status{white-space:nowrap;border:1px solid #cbdaca;background:#edf4ec;color:#41654b;border-radius:99px;padding:7px 12px;font-size:12px;font-weight:700}
+.stepbar{display:flex;gap:7px;margin-bottom:24px}.stepbar span{height:4px;flex:1;border-radius:8px;background:#e0e8e0}.stepbar span.on{background:var(--green)}
+.page{display:none}.page.active{display:block}.grid2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:18px}.card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);margin-bottom:18px}.card h2{font-size:18px;margin:0 0 5px}.card h3{font-size:15px;margin:0 0 10px}.hint{color:var(--muted);font-size:13px;margin:0 0 18px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:13px;font-weight:700;color:#53645a}.field input,.field select{width:100%;border:1px solid #d8e2d9;background:#fbfdfb;border-radius:10px;padding:11px 12px;color:var(--ink);outline:none}.field input:focus,.field select:focus{border-color:var(--green);box-shadow:0 0 0 3px #426b5318}.unit{font-size:12px;color:var(--muted)}.metric{background:#f0f5ef;border-radius:14px;padding:16px}.metric strong{font-size:28px;display:block;color:var(--green);line-height:1.2}.metric span{font-size:12px;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.plan-mini{width:100%;height:auto;background:#f7faf6;border-radius:12px;border:1px solid var(--line)}.note{border-left:3px solid var(--orange);padding:10px 12px;background:#fbf6ef;color:#765b3d;border-radius:0 9px 9px 0;font-size:12px;margin-top:14px}
+.actions{display:flex;justify-content:space-between;gap:10px;margin-top:20px}.btn{border:1px solid #d5e0d6;background:white;color:var(--ink);padding:10px 16px;border-radius:10px;font-weight:700}.btn.primary{background:var(--green);border-color:var(--green);color:white}.btn:disabled{opacity:.4;cursor:not-allowed}.btn.small{font-size:12px;padding:7px 10px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.plant-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.plant{border:1px solid var(--line);border-radius:14px;padding:15px;display:flex;flex-direction:column;gap:8px}.plant-top{display:flex;justify-content:space-between;gap:8px}.plant h3{margin:0;font-size:15px}.latin{font-size:11px;color:var(--muted);font-style:italic}.score{font-size:13px;color:var(--green);font-weight:800;background:#edf4ed;border-radius:8px;padding:4px 8px;height:max-content}.tags{display:flex;gap:5px;flex-wrap:wrap}.tag{font-size:11px;padding:3px 7px;border-radius:99px;background:#f0f3ed;color:#62715f}.reason{font-size:12px;color:#68766d;min-height:38px}.plant .btn{margin-top:auto}.plant.selected{border-color:#7fa487;background:#fbfefb}.empty{padding:25px;text-align:center;color:var(--muted);border:1px dashed #ccd8cd;border-radius:12px}
+.canvas-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#f7faf6;padding:10px}.canvas-wrap svg{display:block;width:100%;min-width:450px;height:auto;touch-action:none}.layers{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:#5f6e64}.layers label{display:flex;gap:6px;align-items:center}.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:10px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.summary{display:grid;grid-template-columns:1fr 1fr;gap:12px}.summary div{padding:13px;background:#f5f8f4;border-radius:11px}.summary b{display:block;font-size:12px;color:#6b7b70}.summary span{font-size:15px;font-weight:700}.output{white-space:pre-wrap;background:#f6f8f5;border:1px solid var(--line);padding:14px;border-radius:12px;font-size:13px;max-height:340px;overflow:auto}.checklist{display:grid;gap:10px}.check{display:flex;gap:9px;font-size:13px;color:#58685e}.foot{font-size:11px;color:#829087;margin-top:24px}
+@media(max-width:850px){.app{grid-template-columns:1fr}.side{padding:14px 16px;gap:12px}.brand small{display:inline;margin-left:8px}.nav{grid-template-columns:repeat(4,1fr)}.nav button{justify-content:center;padding:9px 5px;font-size:12px;gap:5px}.side-note{display:none}.main{padding:22px 15px}.grid2{grid-template-columns:1fr}}
+@media(max-width:560px){.top{display:block}.status{display:inline-block;margin-top:10px}.fields,.plant-list,.summary{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(3,1fr)}.card{padding:17px}.nav button{font-size:0}.nav button .num{font-size:11px}.nav button::after{font-size:11px}.nav button:nth-child(1)::after{content:"基地"}.nav button:nth-child(2)::after{content:"推薦"}.nav button:nth-child(3)::after{content:"配置"}.nav button:nth-child(4)::after{content:"輸出"}}
+@media print{.side,.top,.stepbar,.actions,.toolbar button,.layers{display:none!important}.app{display:block}.main{padding:0}.page{display:none!important}#page4{display:block!important}.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand">植栽配置助手<small>LANDSCAPE PLANTING LAB</small></div>
+  <nav class="nav" aria-label="主要導覽">
+    <button class="active" data-page="1"><span class="num">01</span>基地設定</button>
+    <button data-page="2"><span class="num">02</span>植栽推薦</button>
+    <button data-page="3"><span class="num">03</span>配置預覽</button>
+    <button data-page="4"><span class="num">04</span>成果輸出</button>
+  </nav>
+  <div class="side-note">離線規則式教學示範<br>不連接 GPT、GIS 或即時環境資料。</div>
+</aside>
+<main class="main">
+  <header class="top"><div><div class="eyebrow">LANDSCAPE DESIGN / LEARNING PROTOTYPE</div><h1 id="pageTitle">基地條件設定</h1><p class="sub" id="pageSub">先定義基地尺度與環境條件，建立推薦的判斷基礎。</p></div><span class="status">● 離線規則式教學示範</span></header>
+  <div class="stepbar"><span class="on"></span><span></span><span></span><span></span></div>
+
+  <section class="page active" id="page1">
+    <div class="grid2">
+      <div class="card">
+        <h2>01 / 基地基本資料</h2><p class="hint">輸入基地條件，面積將依長 × 寬即時更新。</p>
+        <div class="fields">
+          <div class="field full"><label for="project">專案名稱</label><input id="project" value="校園中庭植栽配置示範"></div>
+          <div class="field full"><label for="siteType">基地類型</label><select id="siteType"><option>校園中庭</option><option>住宅庭院</option><option>社區開放空間</option><option>街道綠帶</option><option>屋頂花園</option></select></div>
+          <div class="field"><label for="length">基地長度 <span class="unit">(m)</span></label><input id="length" type="number" min="1" max="500" step=".5" value="24"></div>
+          <div class="field"><label for="width">基地寬度 <span class="unit">(m)</span></label><input id="width" type="number" min="1" max="500" step=".5" value="18"></div>
+          <div class="field"><label for="sun">日照等級</label><select id="sun"><option>遮蔭</option><option selected>半日照</option><option>全日照</option></select></div>
+          <div class="field"><label for="goal">設計訴求</label><select id="goal"><option selected>低維護</option><option>生態友善</option><option>四季景觀</option></select></div>
+        </div>
+        <div id="validation" class="note">示範資料：非現地測量，請勿視為實際基地調查。</div>
+        <div class="actions"><span></span><button class="btn primary" data-next="2">下一步：植栽推薦 →</button></div>
+      </div>
+      <div>
+        <div class="card"><h2>基地尺度概覽</h2><p class="hint">依輸入長寬產生比例示意。</p><svg id="miniPlan" class="plan-mini" viewBox="0 0 320 220" role="img" aria-label="基地長寬比例示意圖"><rect x="42" y="25" width="236" height="150" rx="4" fill="#e3eee1" stroke="#64836a" stroke-width="2"/><path d="M42 192H278" stroke="#9aa99b"/><text x="160" y="207" text-anchor="middle" font-size="11" fill="#647469">24 m</text><text x="18" y="104" text-anchor="middle" font-size="11" fill="#647469" transform="rotate(-90 18 104)">18 m</text><path d="M65 45H255M65 45V155M255 45V155M65 155H255" stroke="#b5cbb5" stroke-dasharray="4 4" fill="none"/></svg></div>
+        <div class="metrics"><div class="metric"><strong id="area">432</strong><span>基地面積 m²</span></div><div class="metric"><strong id="sunMetric">半日照</strong><span>日照條件</span></div><div class="metric"><strong id="goalMetric">低維護</strong><span>設計訴求</span></div></div>
+        <div class="card" style="margin-top:18px"><h3>資料檢核</h3><div id="checks" class="checklist"><div class="check">✓ 長寬皆為正數</div><div class="check">✓ 已設定日照與設計訴求</div><div class="check">! 尚未進行現地調查</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page2">
+    <div class="card"><div class="toolbar" style="justify-content:space-between"><div><h2>02 / 規則式植栽推薦</h2><p class="hint" style="margin:4px 0 0">六種示範物種依日照匹配與設計訴求計分；分數只用於教學排序。</p></div><button class="btn small" id="resetPlants">重設選用物種</button></div></div>
+    <div class="grid2">
+      <div><div class="toolbar" style="justify-content:space-between;margin:0 0 10px"><b>候選植栽（依分數排序）</b><span class="unit" id="rankInfo">共 6 種</span></div><div class="plant-list" id="plantList"></div></div>
+      <div>
+        <div class="card"><h2>評分邏輯說明</h2><p class="hint">採透明、可檢視的簡化規則，不代表專業適生性鑑定。</p><div class="summary"><div><b>日照匹配</b><span>0–40 分</span></div><div><b>設計訴求</b><span>0–40 分</span></div><div><b>維護級距</b><span>0–20 分</span></div><div><b>總分</b><span>0–100 分</span></div></div><p class="hint" style="margin:14px 0 0">同分時依資料表順序排列。真實選種仍須確認土壤、排水、風環境、尺度、毒性、根系與地方規範。</p></div>
+        <div class="card"><h2>目前選用清單</h2><p class="hint">加入物種後會同步顯示於配置預覽。</p><div id="selectedList" class="checklist"></div><div class="metric" style="margin-top:14px"><strong id="selectedCount">0</strong><span>已選物種數</span></div></div>
+      </div>
+    </div>
+    <div class="actions"><button class="btn" data-prev="1">← 上一步</button><button class="btn primary" data-next="3">下一步：配置預覽 →</button></div>
+  </section>
+
+  <section class="page" id="page3">
+    <div class="grid2">
+      <div class="card"><h2>03 / 植栽配置平面示意</h2><p class="hint">正射示意圖；可拖曳喬木樹冠調整位置，非工程設計圖。</p>
+        <div class="canvas-wrap"><svg id="siteSvg" viewBox="0 0 720 500" role="img" aria-label="基地植栽配置示意平面圖">
+          <defs><pattern id="grass" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#b6c9ad"/></pattern></defs>
+          <rect x="55" y="40" width="610" height="400" rx="5" fill="#e7efe3" stroke="#718b73" stroke-width="3"/>
+          <rect x="55" y="40" width="610" height="400" fill="url(#grass)" opacity=".45"/>
+          <g id="walkLayer"><path d="M55 340H665" stroke="#d8cdb6" stroke-width="48" fill="none"/><path d="M55 340H665" stroke="#b7aa90" stroke-width="1.5" stroke-dasharray="7 7" fill="none"/><text x="360" y="345" text-anchor="middle" font-size="13" fill="#756b5b">主要步道（示意）</text></g>
+          <g id="treeLayer"></g><g id="shrubLayer"></g><g id="groundLayer"></g>
+          <text x="360" y="25" text-anchor="middle" font-size="12" fill="#68786b">北 ↑</text><text x="360" y="472" text-anchor="middle" font-size="12" fill="#68786b" id="svgScale">基地 24 × 18 m（示意）</text>
+        </svg></div>
+        <div class="legend"><span><i class="dot" style="background:#547a55"></i>喬木樹冠</span><span><i class="dot" style="background:#91ad7b"></i>灌木團塊</span><span><i class="dot" style="background:#c1cf9a"></i>地被</span><span><i class="dot" style="background:#d8cdb6"></i>步道</span></div>
+        <div class="note">拖曳深綠色喬木圓形可調整位置。圖面僅呈現概念性配置，不含比例放樣、株距、管線或施工細節。</div>
+      </div>
+      <div>
+        <div class="card"><h2>圖層控制</h2><p class="hint">勾選以顯示或隱藏配置圖層。</p><div class="layers"><label><input type="checkbox" data-layer="walkLayer" checked>步道</label><label><input type="checkbox" data-layer="treeLayer" checked>喬木</label><label><input type="checkbox" data-layer="shrubLayer" checked>灌木</label><label><input type="checkbox" data-layer="groundLayer" checked>地被</label></div><div class="actions"><button class="btn small" id="resetPositions">重設樹木位置</button><button class="btn small" id="redraw">重新配置</button></div></div>
+        <div class="card"><h2>配置統計</h2><div class="metrics"><div class="metric"><strong id="treeCount">0</strong><span>喬木符號</span></div><div class="metric"><strong id="shrubCount">0</strong><span>灌木團塊</span></div><div class="metric"><strong id="groundCount">0</strong><span>地被團塊</span></div></div><p class="hint" style="margin:14px 0 0">統計依已選物種層級與示意符號生成，並非實際株數或綠覆率。</p></div>
+        <div class="card"><h3>配置原則提醒</h3><div class="checklist"><div class="check">✓ 喬木配置需考量成熟樹冠與建築退縮</div><div class="check">✓ 灌木避免阻擋視線與主要動線</div><div class="check">✓ 地被需檢核踩踏、排水與維護方式</div><div class="check">! 尚未納入實測日照、土壤及地下管線</div></div></div>
+      </div>
+    </div>
+    <div class="actions"><button class="btn" data-prev="2">← 上一步</button><button class="btn primary" data-next="4">下一步：成果輸出 →</button></div>
+  </section>
+
+  <section class="page" id="page4">
+    <div class="grid2">
+      <div>
+        <div class="card"><h2>04 / 設計成果摘要</h2><p class="hint">根據目前輸入條件與選用物種自動彙整。</p><div class="summary" id="summary"></div></div>
+        <div class="card"><h2>候選植栽與配置條件</h2><div id="outputPlants" class="checklist"></div></div>
+      </div>
+      <div>
+        <div class="card"><h2>專業查核清單</h2><p class="hint">原型不取代景觀專業設計與現地調查。</p><div class="checklist"><div class="check">□ 現地日照時數、季節變化與遮蔭範圍</div><div class="check">□ 土壤質地、pH、排水與灌溉水源</div><div class="check">□ 植物成熟尺寸、根系、落葉及病蟲害</div><div class="check">□ 人行淨寬、無障礙、視線與消防動線</div><div class="check">□ 地方樹種規範、毒性與生態風險</div><div class="check">□ 養護人力、預算與季節性管理</div></div></div>
+        <div class="card"><h2>資料預覽</h2><pre class="output" id="jsonPreview"></pre><div class="toolbar"><button class="btn primary" id="downloadJson">下載 JSON</button><button class="btn" id="print">列印／儲存 PDF</button></div></div>
+      </div>
+    </div>
+    <div class="actions"><button class="btn" data-prev="3">← 上一步</button><span></span></div>
+  </section>
+  <div class="foot">原型聲明：本工具為離線規則式教學示範。物種資料、評分、配置與統計均為模擬資料，不構成現地勘查、植物適生性鑑定或專業設計建議。</div>
+</main>
+</div>
+<script>
+"use strict";
+const plants=[
+{id:"p1",name:"台灣欒樹",latin:"Koelreuteria elegans subsp. formosana",layer:"喬木",sun:["全日照","半日照"],maintenance:2,traits:"季相變化明顯，花果具觀賞性",goals:["四季景觀","生態友善"],reason:"半日照可列為初步候選；需預留成熟樹冠與落果清理空間。"},
+{id:"p2",name:"樟樹",latin:"Cinnamomum camphora",layer:"喬木",sun:["全日照","半日照"],maintenance:2,traits:"常綠樹冠，提供遮蔭與棲地",goals:["低維護","生態友善"],reason:"常綠與遮蔭特性符合低維護概念；仍須確認基地尺度與根系空間。"},
+{id:"p3",name:"杜鵑",latin:"Rhododendron simsii",layer:"灌木",sun:["半日照","遮蔭"],maintenance:2,traits:"花色豐富，適合群植形成色塊",goals:["四季景觀"],reason:"半日照條件具初步匹配性；需留意土壤酸鹼與修剪需求。"},
+{id:"p4",name:"鵝掌藤",latin:"Heptapleurum arboricola",layer:"灌木",sun:["半日照","遮蔭","全日照"],maintenance:1,traits:"常綠、耐修剪，可作綠籬或團塊",goals:["低維護","生態友善"],reason:"適應日照範圍較廣且維護級距低，適合做為示範灌木候選。"},
+{id:"p5",name:"沿階草",latin:"Ophiopogon japonicus",layer:"地被",sun:["半日照","遮蔭"],maintenance:1,traits:"低矮常綠，可作林下地被",goals:["低維護","生態友善"],reason:"可作半日照或遮蔭區的低矮地被；需確認排水及踩踏程度。"},
+{id:"p6",name:"腎蕨",latin:"Nephrolepis cordifolia",layer:"地被",sun:["半日照","遮蔭"],maintenance:2,traits:"羽狀葉形，營造濃密林下層次",goals:["生態友善","四季景觀"],reason:"適合以葉形增加林下層次；需檢核濕度與擴展性。"}
+];
+const state={selected:["p2","p4","p5"],positions:[{x:170,y:155},{x:545,y:145},{x:350,y:250}]};
+const $=id=>document.getElementById(id);
+function score(p){let s=p.sun.includes($("sun").value)?40:($("sun").value==="半日照"&&p.sun.length===3?30:10);s+=p.goals.includes($("goal").value)?40:20;s+=(3-p.maintenance)*10;return Math.max(0,Math.min(100,s))}
+function updateBase(){
+ const l=Number($("length").value),w=Number($("width").value),valid=Number.isFinite(l)&&Number.isFinite(w)&&l>0&&w>0&&l<=500&&w<=500;
+ $("area").textContent=valid?(l*w).toLocaleString("zh-TW",{maximumFractionDigits:2}):"—";
+ $("sunMetric").textContent=$("sun").value;$("goalMetric").textContent=$("goal").value;
+ $("validation").textContent=valid?"基地面積已更新；本頁為教學示範資料，非現地測量。":"請輸入 0–500 m 範圍內的正數長、寬。";
+ $("checks").innerHTML=`<div class="check">${valid?"✓":"!"} 長寬${valid?"皆為有效正數":"需為 0–500 m 的正數"}</div><div class="check">✓ 已設定日照與設計訴求</div><div class="check">! 尚未進行現地調查</div>`;
+ const rect=$("miniPlan").querySelector("rect"),scale=Math.min(236/Math.max(l||1,w||1),150/Math.max(w||1,l||1));
+ const rw=valid?Math.max(15,l*scale):236,rh=valid?Math.max(15,w*scale):150;rect.setAttribute("x",(320-rw)/2);rect.setAttribute("y",(200-rh)/2);rect.setAttribute("width",rw);rect.setAttribute("height",rh);
+ const texts=$("miniPlan").querySelectorAll("text");texts[0].textContent=valid?`${l} m`:"長度";texts[1].textContent=valid?`${w} m`:"寬度";
+}
+function renderPlants(){
+ const sorted=[...plants].sort((a,b)=>score(b)-score(a));
+ $("plantList").innerHTML=sorted.map(p=>{let chosen=state.selected.includes(p.id);return `<article class="plant ${chosen?"selected":""}"><div class="plant-top"><div><h3>${p.name}</h3><div class="latin">${p.latin}</div></div><span class="score">${score(p)} 分</span></div><div class="tags"><span class="tag">${p.layer}層</span><span class="tag">維護 ${["低","中","高"][p.maintenance-1]}</span><span class="tag">${p.sun.join("／")}</span></div><div class="reason">${p.traits}<br>${p.reason}</div><button class="btn small ${chosen?"":"primary"}" data-toggle="${p.id}">${chosen?"移除物種":"＋ 加入配置"}</button></article>`}).join("");
+ $("rankInfo").textContent=`共 ${plants.length} 種｜依總分排序`;
+ document.querySelectorAll("[data-toggle]").forEach(b=>b.addEventListener("click",()=>{let id=b.dataset.toggle;state.selected=state.selected.includes(id)?state.selected.filter(x=>x!==id):[...state.selected,id];renderPlants();renderSelected();drawPlan();}));
+}
+function renderSelected(){
+ const list=plants.filter(p=>state.selected.includes(p.id));
+ $("selectedCount").textContent=list.length;
+ $("selectedList").innerHTML=list.length?list.map(p=>`<div class="check">✓ ${p.name}｜${p.layer}層</div>`).join(""):'<div class="empty">尚未選用物種</div>';
+}
+function drawPlan(){
+ const list=plants.filter(p=>state.selected.includes(p.id));
+ const trees=list.filter(p=>p.layer==="喬木"),shrubs=list.filter(p=>p.layer==="灌木"),grounds=list.filter(p=>p.layer==="地被");
+ $("treeLayer").innerHTML=trees.map((p,i)=>{let pos=state.positions[i]||{x:170+i*170,y:150};return `<g class="draggable" data-index="${i}" tabindex="0" role="img" aria-label="${p.name}喬木，可拖曳"><circle cx="${pos.x}" cy="${pos.y}" r="49" fill="#668b62" opacity=".28" stroke="#426b53" stroke-width="2"/><circle cx="${pos.x}" cy="${pos.y}" r="28" fill="#547a55" stroke="#36583d" stroke-width="2"/><text x="${pos.x}" y="${pos.y+4}" text-anchor="middle" font-size="11" fill="white">喬木</text></g>`}).join("");
+ $("shrubLayer").innerHTML=shrubs.map((p,i)=>{let x=240+i*145;return `<g><ellipse cx="${x}" cy="255" rx="65" ry="35" fill="#91ad7b" opacity=".85" stroke="#66875e"/><text x="${x}" y="260" text-anchor="middle" font-size="12" fill="#304b35">${p.name}</text></g>`}).join("");
+ $("groundLayer").innerHTML=grounds.map((p,i)=>{let x=160+i*300;return `<g><ellipse cx="${x}" cy="395" rx="92" ry="22" fill="#c1cf9a" opacity=".9" stroke="#91a76d"/><text x="${x}" y="399" text-anchor="middle" font-size="12" fill="#42533a">${p.name}</text></g>`}).join("");
+ $("treeCount").textContent=trees.length;$("shrubCount").textContent=shrubs.length;$("groundCount").textContent=grounds.length;
+ $("svgScale").textContent=`基地 ${$("length").value} × ${$("width").value} m（配置示意，非比例施工圖）`;
+ document.querySelectorAll(".draggable").forEach(g=>{g.addEventListener("pointerdown",startDrag);});
+ document.querySelectorAll("[data-layer]").forEach(c=>{let el=$(c.dataset.layer);if(el)el.style.display=c.checked?"":"none";});
+}
+let drag=null;
+function startDrag(e){const svg=$("siteSvg"),pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());drag={index:Number(e.currentTarget.dataset.index),dx:p.x-state.positions[Number(e.currentTarget.dataset.index)].x,dy:p.y-state.positions[Number(e.currentTarget.dataset.index)].y};e.currentTarget.setPointerCapture(e.pointerId);}
+$("siteSvg").addEventListener("pointermove",e=>{if(!drag)return;const pt=$("siteSvg").createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform($("siteSvg").getScreenCTM().inverse());state.positions[drag.index]={x:Math.max(100,Math.min(620,p.x-drag.dx)),y:Math.max(95,Math.min(300,p.y-drag.dy))};drawPlan();});
+$("siteSvg").addEventListener("pointerup",()=>drag=null);$("siteSvg").addEventListener("pointercancel",()=>drag=null);
+document.querySelectorAll("[data-layer]").forEach(c=>c.addEventListener("change",()=>{$(c.dataset.layer).style.display=c.checked?"":"none"}));
+function dataObject(){let l=Number($("length").value),w=Number($("width").value);return {prototype_notice:"離線規則式教學示範；非現地調查、非專業設計建議。未接入 GPT、植物辨識模型、GIS 或真實環境資料。",project:{name:$("project").value,site_type:$("siteType").value,length_m:l,width_m:w,area_m2:l*w,sunlight:$("sun").value,design_goal:$("goal").value},scoring:{method:"日照匹配 0-40 + 設計訴求 0-40 + 維護級距 0-20；簡化規則式排序",scores:plants.map(p=>({plant_id:p.id,name:p.name,score:score(p)}))},selected_plants:plants.filter(p=>state.selected.includes(p.id)).map(p=>({id:p.id,name:p.name,scientific_name:p.latin,layer:p.layer,sunlight:p.sun,maintenance_level:p.maintenance,design_features:p.traits,matching_reason:p.reason})),layout:{type:"SVG 正射配置示意",tree_positions:state.positions,selected_layers:Object.fromEntries([...document.querySelectorAll("[data-layer]")].map(c=>[c.dataset.layer,c.checked])),warning:"符號與數量僅供教學示意，不代表實際株數、株距或綠覆率。"},professional_checks:["現地日照與季節遮蔭","土壤、pH、排水及灌溉","成熟尺寸、根系與病蟲害","無障礙、人行淨寬及消防動線","地方規範、毒性與生態風險","養護人力及預算"]}}
+function renderOutput(){
+ const d=dataObject();$("summary").innerHTML=`<div><b>專案名稱</b><span>${escapeHtml(d.project.name)}</span></div><div><b>基地類型</b><span>${d.project.site_type}</span></div><div><b>基地尺度</b><span>${d.project.length_m} × ${d.project.width_m} m</span></div><div><b>基地面積</b><span>${d.project.area_m2.toLocaleString("zh-TW")} m²</span></div><div><b>日照條件</b><span>${d.project.sunlight}</span></div><div><b>設計訴求</b><span>${d.project.design_goal}</span></div>`;
+ $("outputPlants").innerHTML=d.selected_plants.length?d.selected_plants.map(p=>`<div class="check">✓ <b>${p.name}</b>｜${p.layer}層｜${p.scientific_name}<br><span class="unit">${p.matching_reason}</span></div>`).join(""):'<div class="empty">目前沒有選用物種，請返回步驟二加入。</div>';
+ $("jsonPreview").textContent=JSON.stringify(d,null,2);
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function showPage(n){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===`page${n}`));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===String(n)));document.querySelectorAll(".stepbar span").forEach((s,i)=>s.classList.toggle("on",i<n));const titles={1:["基地條件設定","先定義基地尺度與環境條件，建立推薦的判斷基礎。"],2:["植栽推薦","透過可檢視的簡化規則，理解物種篩選的依據。"],3:["配置預覽","將已選物種依喬、灌、草層級呈現在正射示意圖。"],4:["成果輸出","彙整專案條件、植栽清單與後續專業查核事項。"]};$("pageTitle").textContent=titles[n][0];$("pageSub").textContent=titles[n][1];if(n===2){renderPlants();renderSelected()}if(n===3)drawPlan();if(n===4)renderOutput();window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>showPage(Number(b.dataset.page))));
+document.querySelectorAll("[data-next]").forEach(b=>b.addEventListener("click",()=>{if(Number(b.dataset.next)>1&&!updateValidation())return;showPage(Number(b.dataset.next))}));
+document.querySelectorAll("[data-prev]").forEach(b=>b.addEventListener("click",()=>showPage(Number(b.dataset.prev))));
+function updateValidation(){let l=Number($("length").value),w=Number($("width").value);if(!(l>0&&w>0&&l<=500&&w<=500)){alert("請先輸入有效的基地長寬（0–500 m）。");return false}return true}
+["length","width","sun","goal"].forEach(id=>$(id).addEventListener("input",()=>{updateBase();renderPlants();renderSelected();}));
+$("resetPlants").addEventListener("click",()=>{state.selected=["p2","p4","p5"];renderPlants();renderSelected();drawPlan()});
+$("resetPositions").addEventListener("click",()=>{state.positions=[{x:170,y:155},{x:545,y:145},{x:350,y:250}];drawPlan()});
+$("redraw").addEventListener("click",drawPlan);
+$("downloadJson").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(dataObject(),null,2)],{type:"application/json;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="landscape-planting-project.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)});
+$("print").addEventListener("click",()=>window.print());
+updateBase();renderPlants();renderSelected();drawPlan();
+</script>
+</body>
+</html>
